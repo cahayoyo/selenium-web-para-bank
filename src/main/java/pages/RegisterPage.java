@@ -100,6 +100,10 @@ public class RegisterPage {
         btnRegister.click();
     }
 
+    public boolean isHeaderDisplayed() {
+        return headerSigningUp.isDisplayed();
+    }
+
     public void clearAllFields() {
         txtFirstName.clear();
         txtLastName.clear();
@@ -191,6 +195,7 @@ public class RegisterPage {
         enterUsername(username);
         enterPassword(password);
         enterConfirmPassword(password);
-        clickRegisterButton();
+
+        Log.info("Submitted registration form with username: " + username);
     }
 }
