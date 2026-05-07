@@ -10,91 +10,109 @@ import utils.Helper;
 import utils.Log;
 
 public class RegisterPage {
-    WebDriver driver;
-    public RegisterPage(WebDriver driver){
+    private final WebDriver driver;
+
+    // ==================== Elements ====================
+    @FindBy(xpath = "//h1[@class='title']")
+    private WebElement headerSigningUp;
+
+    @FindBy(xpath = "//p[contains(text(),'If you have an account with us you can sign-up for')]")
+    private WebElement paragraphDescription;
+
+    @FindBy(xpath = "//b[normalize-space()='First Name:']") private WebElement labelFirstName;
+    @FindBy(xpath = "//b[normalize-space()='Last Name:']") private WebElement labelLastName;
+    @FindBy(xpath = "//b[normalize-space()='Address:']") private WebElement labelAddress;
+    @FindBy(xpath = "//b[normalize-space()='City:']") private WebElement labelCity;
+    @FindBy(xpath = "//b[normalize-space()='State:']") private WebElement labelState;
+    @FindBy(xpath = "//b[normalize-space()='Zip Code:']") private WebElement labelZipCode;
+    @FindBy(xpath = "//b[normalize-space()='Phone #:']") private WebElement labelPhone;
+    @FindBy(xpath = "//b[normalize-space()='SSN:']") private WebElement labelSSN;
+    @FindBy(xpath = "//b[normalize-space()='Username:']") private WebElement labelUsername;
+    @FindBy(xpath = "//b[normalize-space()='Password:']") private WebElement labelPassword;
+    @FindBy(xpath = "//b[normalize-space()='Confirm:']") private WebElement labelConfirm;
+
+    @FindBy(xpath = "//input[@id='customer.firstName']") private WebElement txtFirstName;
+    @FindBy(xpath = "//input[@id='customer.lastName']") private WebElement txtLastName;
+    @FindBy(xpath = "//input[@id='customer.address.street']") private WebElement txtAddress;
+    @FindBy(xpath = "//input[@id='customer.address.city']") private WebElement txtCity;
+    @FindBy(xpath = "//input[@id='customer.address.state']") private WebElement txtState;
+    @FindBy(xpath = "//input[@id='customer.address.zipCode']") private WebElement txtZipCode;
+    @FindBy(xpath = "//input[@id='customer.phoneNumber']") private WebElement txtPhone;
+    @FindBy(xpath = "//input[@id='customer.ssn']") private WebElement txtSSN;
+    @FindBy(xpath = "//input[@id='customer.username']") private WebElement txtUsername;
+    @FindBy(xpath = "//input[@id='customer.password']") private WebElement txtPassword;
+    @FindBy(xpath = "//input[@id='repeatedPassword']") private WebElement txtConfirmPassword;
+
+    @FindBy(xpath = "//input[@value='Register']") private WebElement btnRegister;
+
+    // ==================== Constructor ====================
+    public RegisterPage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
 
-    // Elements
-    @FindBy(xpath = "//h1[@class='title']")
-    WebElement hSigningUpIsEasy;
-    @FindBy(xpath = "//p[contains(text(),'If you have an account with us you can sign-up for')]")
-    WebElement pIfYouHave;
-    @FindBy(xpath = "//b[normalize-space()='First Name:']")
-    WebElement labelFirstName;
-    @FindBy(xpath = "//b[normalize-space()='Last Name:']")
-    WebElement labelLastName;
-    @FindBy(xpath = "//b[normalize-space()='Address:']")
-    WebElement labelAddress;
-    @FindBy(xpath = "//b[normalize-space()='City:']")
-    WebElement labelCity;
-    @FindBy(xpath = "//b[normalize-space()='State:']")
-    WebElement labelState;
-    @FindBy(xpath = "//b[normalize-space()='Zip Code:']")
-    WebElement labelZipCode;
-    @FindBy(xpath = "//b[normalize-space()='Phone #:']")
-    WebElement labelPhone;
-    @FindBy(xpath = "//b[normalize-space()='SSN:']")
-    WebElement labelSSN;
-    @FindBy(xpath = "//b[normalize-space()='Username:']")
-    WebElement labelUsername;
-    @FindBy(xpath = "//b[normalize-space()='Password:']")
-    WebElement labelPassword;
-    @FindBy(xpath = "//b[normalize-space()='Confirm:']")
-    WebElement labelConfirm;
-    @FindBy(xpath = "//input[@id='customer.firstName']")
-    WebElement inputFirstName;
-    @FindBy(xpath = "//input[@id='customer.lastName']")
-    WebElement inputLastName;
-    @FindBy(xpath = "//input[@id='customer.address.street']")
-    WebElement inputAddress;
-    @FindBy(xpath = "//input[@id='customer.address.city']")
-    WebElement inputCity;
-    @FindBy(xpath = "//input[@id='customer.address.state']")
-    WebElement inputState;
-    @FindBy(xpath = "//input[@id='customer.address.zipCode']")
-    WebElement inputZipCode;
-    @FindBy(xpath = "//input[@id='customer.phoneNumber']")
-    WebElement inputPhone;
-    @FindBy(xpath = "//input[@id='customer.ssn']")
-    WebElement inputSSN;
-    @FindBy(xpath = "//input[@id='customer.username']")
-    WebElement inputUsername;
-    @FindBy(xpath = "//input[@id='customer.password']")
-    WebElement inputPassword;
-    @FindBy(xpath = "//input[@id='repeatedPassword']")
-    WebElement inputConfirm;
-    @FindBy(xpath = "//input[@value='Register']")
-    WebElement buttonRegister;
+    // ==================== Action Methods ====================
+    public void enterFirstName(String firstName) {
+        txtFirstName.sendKeys(firstName);
+    }
 
-    public WebElement gethSigningUpIsEasy() { return hSigningUpIsEasy; }
-    public WebElement getpIfYouHave() { return pIfYouHave; }
-    public WebElement getLabelFirstName() { return labelFirstName; }
-    public WebElement getLabelLastName() { return labelLastName; }
-    public WebElement getLabelAddress() { return labelAddress; }
-    public WebElement getLabelCity() { return labelCity; }
-    public WebElement getLabelState() { return labelState; }
-    public WebElement getLabelZipCode() { return labelZipCode; }
-    public WebElement getLabelPhone() { return labelPhone; }
-    public WebElement getLabelSSN() { return labelSSN; }
-    public WebElement getLabelUsername() { return labelUsername; }
-    public WebElement getLabelPassword() { return labelPassword; }
-    public WebElement getLabelConfirm() { return labelConfirm; }
-    public WebElement getInputFirstName() { return inputFirstName; }
-    public WebElement getInputLastName() { return inputLastName; }
-    public WebElement getInputAddress() { return inputAddress; }
-    public WebElement getInputCity() { return inputCity; }
-    public WebElement getInputState() { return inputState; }
-    public WebElement getInputZipCode() { return inputZipCode; }
-    public WebElement getInputPhone() { return inputPhone; }
-    public WebElement getInputSSN() { return inputSSN; }
-    public WebElement getInputUsername() { return inputUsername; }
-    public WebElement getInputPassword() { return inputPassword; }
-    public WebElement getInputConfirm() { return inputConfirm; }
-    public WebElement getButtonRegister() { return buttonRegister; }
+    public void enterLastName(String lastName) {
+        txtLastName.sendKeys(lastName);
+    }
 
-    public void clickButtonRegister() { buttonRegister.click(); }
+    public void enterAddress(String address) {
+        txtAddress.sendKeys(address);
+    }
+
+    public void enterCity(String city) {
+        txtCity.sendKeys(city);
+    }
+
+    public void enterState(String state) {
+        txtState.sendKeys(state);
+    }
+
+    public void enterZipCode(String zipCode) {
+        txtZipCode.sendKeys(zipCode);
+    }
+
+    public void enterPhone(String phone) {
+        txtPhone.sendKeys(phone);
+    }
+
+    public void enterSSN(String ssn) {
+        txtSSN.sendKeys(ssn);
+    }
+
+    public void enterUsername(String username) {
+        txtUsername.sendKeys(username);
+    }
+
+    public void enterPassword(String password) {
+        txtPassword.sendKeys(password);
+    }
+
+    public void enterConfirmPassword(String confirmPassword) {
+        txtConfirmPassword.sendKeys(confirmPassword);
+    }
+
+    public void clickRegisterButton() {
+        btnRegister.click();
+    }
+
+    public void clearAllFields() {
+        txtFirstName.clear();
+        txtLastName.clear();
+        txtAddress.clear();
+        txtCity.clear();
+        txtState.clear();
+        txtZipCode.clear();
+        txtPhone.clear();
+        txtSSN.clear();
+        txtUsername.clear();
+        txtPassword.clear();
+        txtConfirmPassword.clear();
+    }
 
     public void verifyRegisterPageElements(SoftAssert softAssert){
         // ===== Verify URL =====
@@ -102,8 +120,8 @@ public class RegisterPage {
         Helper.verifyContainsUrl(driver, Config.URL_REGISTER, "Register Page");
 
         // ===== Verify Header & Paragraph
-        Helper.verifyElementEqualsText(softAssert, hSigningUpIsEasy, "Signing up is easy!", "Header Signing Up");
-        Helper.verifyElementEqualsText(softAssert, pIfYouHave, "If you have an account with us you can sign-up for free instant online access. You will have to provide some personal information.", "Paragraph Below Header");
+        Helper.verifyElementEqualsText(softAssert, headerSigningUp, "Signing up is easy!", "Header Signing Up");
+        Helper.verifyElementEqualsText(softAssert, paragraphDescription, "If you have an account with us you can sign-up for free instant online access. You will have to provide some personal information.", "Paragraph Below Header");
 
         // ===== Verify All Labels =====
         Helper.verifyElementEqualsText(softAssert, labelFirstName, "First Name:", "Label First Name");
@@ -119,42 +137,60 @@ public class RegisterPage {
         Helper.verifyElementEqualsText(softAssert, labelConfirm, "Confirm:", "Label Confirm");
 
         // ==================== Verify All Input Fields (Displayed + Enabled) ====================
-        Helper.verifyElementDisplayed(inputFirstName, "Input First Name");
-        Helper.verifyElementEnabled(inputFirstName, "Input First Name");
+        Helper.verifyElementDisplayed(txtFirstName, "Input First Name");
+        Helper.verifyElementEnabled(txtFirstName, "Input First Name");
 
-        Helper.verifyElementDisplayed(inputLastName, "Input Last Name");
-        Helper.verifyElementEnabled(inputLastName, "Input Last Name");
+        Helper.verifyElementDisplayed(txtLastName, "Input Last Name");
+        Helper.verifyElementEnabled(txtLastName, "Input Last Name");
 
-        Helper.verifyElementDisplayed(inputAddress, "Input Address");
-        Helper.verifyElementEnabled(inputAddress, "Input Address");
+        Helper.verifyElementDisplayed(txtAddress, "Input Address");
+        Helper.verifyElementEnabled(txtAddress, "Input Address");
 
-        Helper.verifyElementDisplayed(inputCity, "Input City");
-        Helper.verifyElementEnabled(inputCity, "Input City");
+        Helper.verifyElementDisplayed(txtCity, "Input City");
+        Helper.verifyElementEnabled(txtCity, "Input City");
 
-        Helper.verifyElementDisplayed(inputState, "Input State");
-        Helper.verifyElementEnabled(inputState, "Input State");
+        Helper.verifyElementDisplayed(txtState, "Input State");
+        Helper.verifyElementEnabled(txtState, "Input State");
 
-        Helper.verifyElementDisplayed(inputZipCode, "Input Zip Code");
-        Helper.verifyElementEnabled(inputZipCode, "Input Zip Code");
+        Helper.verifyElementDisplayed(txtZipCode, "Input Zip Code");
+        Helper.verifyElementEnabled(txtZipCode, "Input Zip Code");
 
-        Helper.verifyElementDisplayed(inputPhone, "Input Phone");
-        Helper.verifyElementEnabled(inputPhone, "Input Phone");
+        Helper.verifyElementDisplayed(txtPhone, "Input Phone");
+        Helper.verifyElementEnabled(txtPhone, "Input Phone");
 
-        Helper.verifyElementDisplayed(inputSSN, "Input SSN");
-        Helper.verifyElementEnabled(inputSSN, "Input SSN");
+        Helper.verifyElementDisplayed(txtSSN, "Input SSN");
+        Helper.verifyElementEnabled(txtSSN, "Input SSN");
 
-        Helper.verifyElementDisplayed(inputUsername, "Input Username");
-        Helper.verifyElementEnabled(inputUsername, "Input Username");
+        Helper.verifyElementDisplayed(txtUsername, "Input Username");
+        Helper.verifyElementEnabled(txtUsername, "Input Username");
 
-        Helper.verifyElementDisplayed(inputPassword, "Input Password");
-        Helper.verifyElementEnabled(inputPassword, "Input Password");
+        Helper.verifyElementDisplayed(txtPassword, "Input Password");
+        Helper.verifyElementEnabled(txtPassword, "Input Password");
 
-        Helper.verifyElementDisplayed(inputConfirm, "Input Confirm Password");
-        Helper.verifyElementEnabled(inputConfirm, "Input Confirm Password");
+        Helper.verifyElementDisplayed(txtConfirmPassword, "Input Confirm Password");
+        Helper.verifyElementEnabled(txtConfirmPassword, "Input Confirm Password");
 
         // ==================== Verify Register Button (Displayed + Enabled) ====================
-        Helper.verifyElementDisplayed(buttonRegister, "Button Register");
-        Helper.verifyElementEnabled(buttonRegister, "Button Register");
-        Helper.verifyElementEqualsText(softAssert, buttonRegister, "Register", "Button Register Text");
+        Helper.verifyElementDisplayed(btnRegister, "Button Register");
+        Helper.verifyElementEnabled(btnRegister, "Button Register");
+        Helper.verifyElementEqualsText(softAssert, btnRegister, "Register", "Button Register Text");
+    }
+
+    public void registerNewUser(String firstName, String lastName, String address, String city,
+                                String state, String zipCode, String phone, String ssn,
+                                String username, String password) {
+
+        enterFirstName(firstName);
+        enterLastName(lastName);
+        enterAddress(address);
+        enterCity(city);
+        enterState(state);
+        enterZipCode(zipCode);
+        enterPhone(phone);
+        enterSSN(ssn);
+        enterUsername(username);
+        enterPassword(password);
+        enterConfirmPassword(password);
+        clickRegisterButton();
     }
 }
