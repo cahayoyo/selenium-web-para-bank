@@ -49,4 +49,29 @@ public class ExtentReportManager {
             return null;
         }
     }
+
+    public static void addScreenshot(WebDriver driver, String screenshotName, String description) {
+        try {
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String fileName = screenshotName + "_" + timestamp + ".png";
+
+            File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            String path = System.getProperty("user.dir") + "/screenshots/" + fileName;
+
+            FileUtils.copyFile(src, new File(path));
+
+            // Attach ke Extent Report
+            if (test != null) {
+                test.addScreenCaptureFromPath("/screenshots/" + fileName, description);
+                Log.info("Screenshot captured: " + description);
+            }
+        } catch (Exception e) {
+            Log.error("Failed to capture screenshot: " + e.getMessage());
+        }
+    }
+
+    // Tanpa Description
+    public static void addScreenshot(WebDriver driver, String screenshotName) {
+        addScreenshot(driver, screenshotName, screenshotName);
+    }
 }

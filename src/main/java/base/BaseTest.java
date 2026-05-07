@@ -36,7 +36,7 @@ public class BaseTest {
     @BeforeMethod
     public void setUp(Method method) {
         ChromeOptions options = new ChromeOptions();
-        Map<String, Object> prefs = new HashMap<String,Object>();
+        Map<String, Object> prefs = new HashMap<>();
 
         prefs.put("profile.password_manager_leak_detection", false);
         prefs.put("credentials_enable_service", false);
@@ -47,6 +47,7 @@ public class BaseTest {
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         driver.get(Config.URL);
+
         Log.info("===== Chrome Browser Opened =====");
         Log.info("===== Navigate URL to " + Config.URL + " =====");
     }
