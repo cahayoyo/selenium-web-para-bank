@@ -95,6 +95,52 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    public void TC_01_01_03_VerifyRegistrationPageLoadsSuccessfully() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+
+        try {
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Direct access to registration page
+            driver.get(Config.URL_REGISTER);
+            ExtentReportManager.addScreenshot(driver, "Step1_Open_Register_Page",
+                    "Opened Registration Page directly");
+
+            // Verification
+            softAssert.assertTrue(driver.getCurrentUrl().contains("register.htm"),
+                    "Registration Page URL is incorrect");
+
+            softAssert.assertTrue(registerPage.isHeaderDisplayed(),
+                    "Registration header 'Signing up is easy!' is not displayed");
+
+            Log.info("Registration Page loaded successfully with all elements visible");
+
+            ExtentReportManager.addScreenshot(driver, "Step2_Register_Page_Loaded",
+                    "Registration Page loaded successfully");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_01_03_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_01_03_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
     public void TC_01_03_01_RegisterNewAccountWithValidData() {
         SoftAssert softAssert = new SoftAssert();
         String testName = getTestName();
@@ -126,8 +172,6 @@ public class RegisterTest extends BaseTest {
                     uniqueUsername,
                     Config.PASSWORD
             );
-
-            Log.info("Username : " + uniqueUsername);
 
             ExtentReportManager.addScreenshot(driver, "Step2_Filled_Registration_Form",
                     "User filled all registration fields");
