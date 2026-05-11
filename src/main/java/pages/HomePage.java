@@ -5,6 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.devtools.v145.page.Page;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import utils.Log;
 
 public class HomePage {
     private final WebDriver driver;
@@ -28,10 +29,12 @@ public class HomePage {
     // ==================== Action Methods ====================
     public void clickRegisterLink() {
         linkRegister.click();
+        Log.info("Clicked Register link from Home Page");
     }
 
     public void clickLoginLink() {
         linkLogin.click();
+        Log.info("Clicked Login link from Home Page");
     }
 
     // ==================== Verification ====================
