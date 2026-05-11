@@ -759,4 +759,305 @@ public class RegisterTest extends BaseTest {
             throw e;
         }
     }
+
+    @Test
+    public void TC_01_05_01_VerifySuccessMessageAfterRegistration() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+        String uniqueUsername = Config.getUniqueUsername();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+        Log.info("Using Unique Username: " + uniqueUsername);
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Navigate to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page_Opened");
+
+            // Step 2: Fill the registration form (without submitting)
+            registerPage.registerNewUser(
+                    Config.FIRST_NAME,
+                    Config.LAST_NAME,
+                    Config.ADDRESS,
+                    Config.CITY,
+                    Config.STATE,
+                    Config.ZIP_CODE,
+                    Config.PHONE,
+                    Config.SSN,
+                    uniqueUsername,
+                    Config.PASSWORD
+            );
+
+            ExtentReportManager.addScreenshot(driver, "Step2_Filled_Registration_Form",
+                    "Form filled before submission");
+
+            // Step 3: Submit the form
+            registerPage.clickRegisterButton();
+            ExtentReportManager.addScreenshot(driver, "Step3_After_Click_Register");
+
+            // === Verification ===
+            String pageSource = driver.getPageSource();
+
+            boolean successMessageDisplayed = pageSource.contains("Your account was created successfully") ||
+                    pageSource.contains("You are now logged in");
+
+            softAssert.assertTrue(successMessageDisplayed,
+                    "Success message was not displayed after registration");
+
+            // Check user is logged in
+            boolean isLoggedIn = pageSource.contains("Welcome") ||
+                    pageSource.contains(uniqueUsername) ||
+                    pageSource.contains("Account Services");
+
+            softAssert.assertTrue(isLoggedIn, "User was not automatically logged in after registration");
+
+            Log.info("✅ Success message appeared and user is logged in after registration");
+
+            ExtentReportManager.addScreenshot(driver, "Step4_Success_Verification",
+                    "Final success verification");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_05_01_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_05_01_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void TC_01_05_02_VerifyAutoLoginAfterRegistration() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+        String uniqueUsername = Config.getUniqueUsername();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+        Log.info("Using Unique Username: " + uniqueUsername);
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Navigate to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page_Opened");
+
+            // Step 2: Fill the registration form
+            registerPage.registerNewUser(
+                    Config.FIRST_NAME,
+                    Config.LAST_NAME,
+                    Config.ADDRESS,
+                    Config.CITY,
+                    Config.STATE,
+                    Config.ZIP_CODE,
+                    Config.PHONE,
+                    Config.SSN,
+                    uniqueUsername,
+                    Config.PASSWORD
+            );
+
+            ExtentReportManager.addScreenshot(driver, "Step2_Filled_Registration_Form");
+
+            // Step 3: Submit the form
+            registerPage.clickRegisterButton();
+            ExtentReportManager.addScreenshot(driver, "Step3_Click_Register_Button");
+
+            // === Verification Auto Login ===
+            String pageSource = driver.getPageSource();
+
+            boolean isAutoLoggedIn = pageSource.contains("Welcome") &&
+                    (pageSource.contains(Config.FIRST_NAME) ||
+                            pageSource.contains(uniqueUsername));
+
+            softAssert.assertTrue(isAutoLoggedIn,
+                    "User was not automatically logged in after successful registration");
+
+            boolean isOnAccountServices = driver.getCurrentUrl().contains("services") ||
+                    pageSource.contains("Account Services");
+
+            softAssert.assertTrue(isOnAccountServices,
+                    "User was not redirected to Account Services page");
+
+            Log.info("✅ User successfully auto logged in after registration with username: " + uniqueUsername);
+
+            ExtentReportManager.addScreenshot(driver, "Step4_Auto_Login_Verified",
+                    "Auto login verification after registration");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_05_02_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_05_02_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void TC_01_05_03_VerifyRedirectToAccountServicesAfterRegistration() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+        String uniqueUsername = Config.getUniqueUsername();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+        Log.info("Using Unique Username: " + uniqueUsername);
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Navigate to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page");
+
+            // Step 2: Fill registration form
+            registerPage.registerNewUser(
+                    Config.FIRST_NAME,
+                    Config.LAST_NAME,
+                    Config.ADDRESS,
+                    Config.CITY,
+                    Config.STATE,
+                    Config.ZIP_CODE,
+                    Config.PHONE,
+                    Config.SSN,
+                    uniqueUsername,
+                    Config.PASSWORD
+            );
+
+            // Step 3: Submit the form
+            registerPage.clickRegisterButton();
+            ExtentReportManager.addScreenshot(driver, "Step2_After_Submit_Registration");
+
+            // === Verification: Redirection to Account Services ===
+            String currentUrl = driver.getCurrentUrl();
+            String pageSource = driver.getPageSource();
+
+            boolean isRedirectedToAccountServices = currentUrl.contains("services") ||
+                    currentUrl.contains("overview") ||
+                    pageSource.contains("Account Services");
+
+            softAssert.assertTrue(isRedirectedToAccountServices,
+                    "User was not redirected to Account Services page after registration");
+
+            // Additional check: Account Services elements are visible
+            boolean accountServicesVisible = pageSource.contains("Open New Account") ||
+                    pageSource.contains("Accounts Overview");
+
+            softAssert.assertTrue(accountServicesVisible,
+                    "Account Services menu is not visible after registration");
+
+            Log.info("✅ User successfully redirected to Account Services page after registration");
+
+            ExtentReportManager.addScreenshot(driver, "Step3_Account_Services_Page",
+                    "Account Services Page after successful registration");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_05_03_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_05_03_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void TC_01_05_04_VerifyNewCheckingAccountCreatedAfterRegistration() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+        String uniqueUsername = Config.getUniqueUsername();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+        Log.info("Using Unique Username: " + uniqueUsername);
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Navigate to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page");
+
+            // Step 2: Fill and submit registration
+            registerPage.registerNewUser(
+                    Config.FIRST_NAME,
+                    Config.LAST_NAME,
+                    Config.ADDRESS,
+                    Config.CITY,
+                    Config.STATE,
+                    Config.ZIP_CODE,
+                    Config.PHONE,
+                    Config.SSN,
+                    uniqueUsername,
+                    Config.PASSWORD
+            );
+
+            // Step 3: Submit the form
+            registerPage.clickRegisterButton();
+            ExtentReportManager.addScreenshot(driver, "Step2_After_Registration_Submit");
+
+            // === Verification: New Checking Account Created ===
+            String pageSource = driver.getPageSource();
+
+            boolean hasCheckingAccount = pageSource.contains("Checking") ||
+                    pageSource.contains("Account Number") ||
+                    pageSource.contains("$") || // balance indicator
+                    pageSource.contains("Open New Account");
+
+            softAssert.assertTrue(hasCheckingAccount,
+                    "New Checking Account was not automatically created after registration");
+
+            Log.info("✅ New Checking Account successfully created after registration");
+
+            ExtentReportManager.addScreenshot(driver, "Step3_Account_Overview_With_New_Checking",
+                    "Account Overview showing new Checking Account");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_05_04_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_05_04_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+        }
+    }
 }
