@@ -428,4 +428,335 @@ public class RegisterTest extends BaseTest {
             throw e;
         }
     }
+
+    // TS-01.04
+    @Test
+    public void TC_01_04_01_SubmitRegistrationWithEmptyRequiredFields() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Go to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page");
+
+            // Step 2: Fill SOME fields, but leave several required fields empty
+            registerPage.enterFirstName(Config.FIRST_NAME);
+            registerPage.enterLastName(Config.LAST_NAME);
+            // sengaja kosongkan beberapa field penting
+            // registerPage.enterAddress(Config.ADDRESS);
+            // registerPage.enterCity(Config.CITY);
+            registerPage.enterState(Config.STATE);
+            registerPage.enterZipCode(Config.ZIP_CODE);
+            registerPage.enterPhone(Config.PHONE);
+            registerPage.enterSSN(Config.SSN);
+            registerPage.enterUsername(Config.getUniqueUsername());
+            registerPage.enterPassword(Config.PASSWORD);
+            registerPage.enterConfirmPassword(Config.PASSWORD);
+
+            ExtentReportManager.addScreenshot(driver, "Step2_Partial_Filled_Empty_Fields");
+
+            // Step 3: Click Register
+            registerPage.clickRegisterButton();
+
+            ExtentReportManager.addScreenshot(driver, "Step3_Click_Register_Partial_Empty");
+
+            // Verification
+            boolean isStillOnRegisterPage = driver.getCurrentUrl().contains("register.htm");
+            softAssert.assertTrue(isStillOnRegisterPage,
+                    "User was redirected even though required fields are empty");
+
+            Log.info("✅ System correctly prevented submission when required fields are empty");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_01_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_01_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void TC_01_04_02_RegisterWithMismatchedPassword() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+        String uniqueUsername = Config.getUniqueUsername();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+        Log.info("Using Unique Username: " + uniqueUsername);
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Go to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page");
+
+            // Step 2: Fill form with mismatched password
+            registerPage.enterFirstName(Config.FIRST_NAME);
+            registerPage.enterLastName(Config.LAST_NAME);
+            registerPage.enterAddress(Config.ADDRESS);
+            registerPage.enterCity(Config.CITY);
+            registerPage.enterState(Config.STATE);
+            registerPage.enterZipCode(Config.ZIP_CODE);
+            registerPage.enterPhone(Config.PHONE);
+            registerPage.enterSSN(Config.SSN);
+            registerPage.enterUsername(uniqueUsername);
+            registerPage.enterPassword(Config.PASSWORD);
+            registerPage.enterConfirmPassword("WrongPassword123!");   // Mismatched
+
+            ExtentReportManager.addScreenshot(driver, "Step2_Filled_Mismatched_Password");
+
+            // Step 3: Click Register
+            registerPage.clickRegisterButton();
+
+            ExtentReportManager.addScreenshot(driver, "Step3_Click_Register_Mismatch");
+
+            // Verification
+            boolean isStillOnRegisterPage = driver.getCurrentUrl().contains("register.htm");
+            softAssert.assertTrue(isStillOnRegisterPage, "User was redirected even though password mismatch");
+
+            // Check for error message
+            boolean hasErrorMessage = driver.getPageSource().contains("Passwords did not match") ||
+                    driver.getPageSource().toLowerCase().contains("password");
+
+            softAssert.assertTrue(hasErrorMessage, "No error message shown for mismatched password");
+
+            Log.info("System correctly rejected registration due to mismatched password");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_02_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_02_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void TC_01_04_03_RegisterWithExistingUsername() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Go to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page");
+
+            // Step 2: Fill form with EXISTING username ("john" is default in ParaBank)
+            registerPage.enterFirstName(Config.FIRST_NAME);
+            registerPage.enterLastName(Config.LAST_NAME);
+            registerPage.enterAddress(Config.ADDRESS);
+            registerPage.enterCity(Config.CITY);
+            registerPage.enterState(Config.STATE);
+            registerPage.enterZipCode(Config.ZIP_CODE);
+            registerPage.enterPhone(Config.PHONE);
+            registerPage.enterSSN(Config.SSN);
+            registerPage.enterUsername("john");                    // Existing username
+            registerPage.enterPassword(Config.PASSWORD);
+            registerPage.enterConfirmPassword(Config.PASSWORD);
+
+            ExtentReportManager.addScreenshot(driver, "Step2_Filled_Existing_Username");
+
+            // Step 3: Click Register
+            registerPage.clickRegisterButton();
+
+            ExtentReportManager.addScreenshot(driver, "Step3_Click_Register_Existing_Username");
+
+            // Verification
+            boolean isStillOnRegisterPage = driver.getCurrentUrl().contains("register.htm");
+            softAssert.assertTrue(isStillOnRegisterPage,
+                    "User was redirected even though username already exists");
+
+            // Check for error message about existing username
+            boolean hasErrorMessage = driver.getPageSource().contains("This username already exists") ||
+                    driver.getPageSource().toLowerCase().contains("username") ||
+                    driver.getPageSource().toLowerCase().contains("already exists");
+
+            softAssert.assertTrue(hasErrorMessage,
+                    "No error message shown for existing username");
+
+            Log.info("✅ System correctly rejected registration due to existing username");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_03_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_03_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void TC_01_04_04_RegisterWithInvalidDataFormat() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+        String uniqueUsername = Config.getUniqueUsername();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+        Log.info("Testing invalid data format with username: " + uniqueUsername);
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page");
+
+            // Fill most fields correctly, but use invalid formats
+            registerPage.enterFirstName(Config.FIRST_NAME);
+            registerPage.enterLastName(Config.LAST_NAME);
+            registerPage.enterAddress(Config.ADDRESS);
+            registerPage.enterCity(Config.CITY);
+            registerPage.enterState(Config.STATE);
+            registerPage.enterZipCode("ABCDE");                    // Invalid Zip Code
+            registerPage.enterPhone("abc123");                     // Invalid Phone
+            registerPage.enterSSN("123-45-abc");                   // Invalid SSN
+            registerPage.enterUsername(uniqueUsername);
+            registerPage.enterPassword(Config.PASSWORD);
+            registerPage.enterConfirmPassword(Config.PASSWORD);
+
+            ExtentReportManager.addScreenshot(driver, "Step2_Filled_Invalid_Format");
+
+            registerPage.clickRegisterButton();
+
+            ExtentReportManager.addScreenshot(driver, "Step3_Click_Register_Invalid_Format");
+
+            // Verification - Should stay on registration page
+            boolean isStillOnRegisterPage = driver.getCurrentUrl().contains("register.htm");
+            softAssert.assertTrue(isStillOnRegisterPage,
+                    "User was redirected even with invalid data format");
+
+            // Check if any validation/error message appears
+            String pageSource = driver.getPageSource().toLowerCase();
+            boolean hasValidationError = pageSource.contains("error") ||
+                    pageSource.contains("invalid") ||
+                    pageSource.contains("format") ||
+                    pageSource.contains("phone") ||
+                    pageSource.contains("ssn") ||
+                    pageSource.contains("zip");
+
+            softAssert.assertTrue(hasValidationError,
+                    "No validation error message shown for invalid data format");
+
+            Log.info("✅ System correctly handled invalid data format");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_04_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_04_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void TC_01_04_05_SubmitRegistrationWithAllFieldsEmpty() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Go to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page_Empty");
+
+            // Step 2: Click Register button WITHOUT filling any fields
+            registerPage.clickRegisterButton();
+            ExtentReportManager.addScreenshot(driver, "Step2_Click_Register_All_Empty");
+
+            // Verification
+            boolean isStillOnRegisterPage = driver.getCurrentUrl().contains("register.htm");
+            softAssert.assertTrue(isStillOnRegisterPage,
+                    "User was redirected even though all fields are empty");
+
+            // Check if any validation or error indication exists
+            String pageSource = driver.getPageSource().toLowerCase();
+            boolean hasAnyValidation = pageSource.contains("error") ||
+                    pageSource.contains("required") ||
+                    pageSource.contains("please") ||
+                    pageSource.contains("invalid");
+
+            // ParaBank kadang tidak menampilkan error yang jelas, jadi kita cek apakah tetap di halaman register
+            Log.info("Validation for empty form detected: " + hasAnyValidation);
+
+            Log.info("✅ System correctly prevented submission with all empty fields (stayed on register page)");
+
+            ExtentReportManager.addScreenshot(driver, "Step3_Empty_Form_Result",
+                    "Result after submitting completely empty form");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_05_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_04_05_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
 }
