@@ -55,6 +55,7 @@ public class RegisterPage {
     public void enterFirstName(String firstName) {
         txtFirstName.sendKeys(firstName);
     }
+    public WebElement getInputFirstName() { return txtFirstName; }
 
     public void enterLastName(String lastName) {
         txtLastName.sendKeys(lastName);
@@ -195,7 +196,5 @@ public class RegisterPage {
         enterUsername(username);
         enterPassword(password);
         enterConfirmPassword(password);
-
-        Log.info("Submitted registration form with username: " + username);
     }
 }

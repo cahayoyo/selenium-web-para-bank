@@ -141,6 +141,157 @@ public class RegisterTest extends BaseTest {
     }
 
     @Test
+    public void TC_01_01_04_VerifyRegistrationPageStableAfterRefresh() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+
+        try {
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Open Registration Page
+            driver.get(Config.URL_REGISTER);
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page_Initial",
+                    "Initial Registration Page");
+
+            // Step 2: Refresh the page
+            driver.navigate().refresh();
+            ExtentReportManager.addScreenshot(driver, "Step2_After_Refresh",
+                    "Registration Page after refresh");
+
+            // Verification
+            softAssert.assertTrue(driver.getCurrentUrl().contains("register.htm"),
+                    "URL changed after refresh");
+
+            softAssert.assertTrue(registerPage.isHeaderDisplayed(),
+                    "Header 'Signing up is easy!' is not displayed after refresh");
+
+            // Check that all fields are empty after refresh
+            softAssert.assertTrue(registerPage.getInputFirstName().getAttribute("value").isEmpty(),
+                    "First Name field is not empty after refresh");
+
+            Log.info("Registration Page remains stable after refresh");
+
+            ExtentReportManager.addScreenshot(driver, "Step3_Verification_Complete",
+                    "Final verification after refresh");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_01_04_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_01_04_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void TC_01_01_05_VerifyBrowserBackButtonFromRegistrationPage() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Go to Home Page
+            driver.get(Config.URL);
+            ExtentReportManager.addScreenshot(driver, "Step1_Home_Page",
+                    "Started from Home Page");
+
+            // Step 2: Go to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step2_Registration_Page",
+                    "Opened Registration Page");
+
+            // Step 3: Click Browser Back Button
+            driver.navigate().back();
+            ExtentReportManager.addScreenshot(driver, "Step3_After_Back_Button",
+                    "After clicking Browser Back Button");
+
+            // Verification
+            softAssert.assertTrue(driver.getCurrentUrl().contains("index.htm"),
+                    "Failed to return to Home Page using Back button");
+
+            softAssert.assertTrue(driver.getPageSource().contains("ParaBank"),
+                    "Home Page content is not displayed after back button");
+
+            Log.info("Browser Back button works correctly from Registration Page");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_01_05_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_01_05_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void TC_01_02_01_VerifyRegistrationPageDisplayedCorrectly() {
+        SoftAssert softAssert = new SoftAssert();
+        String testName = getTestName();
+
+        test = ExtentReportManager.createTest(testName);
+        Log.setExtentTest(test);
+        Log.info("===== Running: " + testName + " =====");
+
+        try {
+            HomePage homePage = new HomePage(driver);
+            RegisterPage registerPage = new RegisterPage(driver);
+
+            // Step 1: Navigate to Registration Page
+            homePage.clickRegisterLink();
+            ExtentReportManager.addScreenshot(driver, "Step1_Registration_Page_Opened");
+
+            // Step 2: Verify all elements using existing method
+            registerPage.verifyRegisterPageElements(softAssert);
+
+            ExtentReportManager.addScreenshot(driver, "Step2_Registration_Page_Verification",
+                    "Full verification of Registration Page elements");
+
+            Log.info("Registration Page displayed correctly with all elements verified");
+
+            Log.info("===== " + testName + " Finished =====");
+            softAssert.assertAll();
+            test.pass(testName + " - PASSED");
+
+        } catch (AssertionError e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_02_01_Failed");
+            test.fail(testName + " - FAILED");
+            Log.error(testName + " FAILED: " + e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            ExtentReportManager.addScreenshot(driver, "TC_01_02_01_Error");
+            test.fail(testName + " - ERROR");
+            Log.error(testName + " ERROR: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
     public void TC_01_03_01_RegisterNewAccountWithValidData() {
         SoftAssert softAssert = new SoftAssert();
         String testName = getTestName();
@@ -149,6 +300,7 @@ public class RegisterTest extends BaseTest {
         test = ExtentReportManager.createTest(testName);
         Log.setExtentTest(test);
         Log.info("===== Running: " + testName + " =====");
+        Log.info("Using Unique Username: " + uniqueUsername);
 
         try {
             HomePage homePage = new HomePage(driver);
@@ -183,7 +335,7 @@ public class RegisterTest extends BaseTest {
                             driver.getPageSource().contains("Your account was created successfully"),
                     "Registration failed or wrong redirection");
 
-            Log.info("User successfully registered a new account");
+            Log.info("Successfully registered new account with username: " + uniqueUsername);
 
             ExtentReportManager.addScreenshot(driver, "Step3_Success_Registration",
                     "Final result after successful registration");
