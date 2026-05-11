@@ -1,5 +1,6 @@
 package utils;
 
+import com.aventstack.extentreports.ExtentTest;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -130,5 +131,24 @@ public class Helper {
     public static void waitClickable(WebDriver driver, WebElement element, int seconds) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(seconds));
         wait.until(ExpectedConditions.elementToBeClickable(element));
+    }
+
+    public static void handleTestFailure(WebDriver driver, ExtentTest test,
+                                         String testName, Exception e) {
+
+        ExtentReportManager.addScreenshot(driver, testName + "_Failed");
+
+        if (test != null) {
+            test.fail(testName + " - FAILED");
+        }
+
+        Log.error(testName + " FAILED: " + e.getMessage());
+
+        // Throw lagi agar TestNG tahu test gagal
+        if (e instanceof RuntimeException) {
+            throw (RuntimeException) e;
+        } else {
+            throw new RuntimeException(e);
+        }
     }
 }
